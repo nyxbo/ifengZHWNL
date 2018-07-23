@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>中华万年历</title>
+    <!-- <link rel="stylesheet" href="css/wnl.css"> -->
+    <!--<link rel="stylesheet" href="css/video-js.css">-->
+    <script src="https://p1.ifengimg.com/a/2018/meizu/jquery-3.2.1.min.js"></script>
+    <script src="https://p1.ifengimg.com/a/2018/meizu/vue.min.js"></script>
+    <!--<script src="js/video.min.js"></script>-->
+    <style>
+        html, body, div, p, img, span, h1, video {
+            padding: 0;
+            margin: 0;
+        }
+        [v-cloak]{
+            display: none;
+        }
+        .myDiv {
+            width: 100%;
+        }
+        .myDiv .container {
+            padding: 0 15px;
+        }
+        .myDiv .container h1 {
+            margin: 20px 0 5px;
+            font-size: 21px;
+            font-family: PingFangSC-Semibold;
+            color: #333;
+        }
+        .myDiv .container .source {
+            margin-bottom: 15px;
+            font-size: 13px;
+            font-family: PingFangSC-Regular;
+            color: #999;
+        }
+        .myDiv .container .content p {
+            font-family: PingFangSC-Regular;
+            font-size: 18px;
+            color: #333333;
+            line-height: 27px;
+            text-align: justify;
+            letter-spacing: 0;
+        }
+        .myDiv .container .content img {
+            width: 100%;
+            margin: 24px 0;
+        }
+        .myDiv .container .content-img {
+            width: 100%;
+            margin: 24px 0;
+        }
+        .myDiv .phvideo video {
+            width: 100%;
+        }
+        .myDiv .phvideo h1 {
+            margin-top: 15px;
+            padding: 0 15px;
+            font-size: 17px;
+            color: #333;
+            font-family: PingFangSC-Regular;
+        }
+        .myDiv .phvideo .source {
+            padding: 5px 15px;
+        }
+        .myDiv .phvideo .source span {
+            font-family: PingFangSC-Regular;
+            font-size: 12px;
+            color: #939393;
+            line-height: 6px;
+        }
+        .advert{
+            padding: 19px 15px 16px;
+        }
+        .advert-doc{
+            display: flex;
+        }
+        .advert-img{
+            margin-left: 15px;
+            width: 110px;
+            height: 72px;
+        }
+        .advert-con{
+            flex: 1;
+        }
+        .advert-con p,.advert-slide p{
+            overflow: hidden;
+            -ms-text-overflow: ellipsis;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp:2;
+            font-family: PingFangSC-Regular;
+            font-size: 13px;
+            font-weight: bold;
+            color: #333333;
+        }
+        .advert-source{
+            display: inline-block;
+            margin-top: 17px;
+            width: 30px;
+            height: 15px;
+            font-size: 12px;
+            line-height: 15px;
+            text-align: center;
+            color: #7497E8;
+            border: 1px solid #7497E8;
+            -webkit-border-radius: 3px;
+            -moz-border-radius: 3px;
+            border-radius: 3px;
+        }
+        .advert-slide{
+            position: relative;
+            display: flex;
+            flex-direction:column;
+        }
+        .advert-imgs{
+            width: 114px;
+            height: 81px;
+        }
+        .advert-imgs:nth-of-type(2){
+            margin:0 2px;
+        }
+        .advert-slide .advert-source{
+            position: absolute;
+            bottom: 7px;
+            left: 8px;
+        }
+    </style>
+</head>
+<body>
+<div class="myDiv" v-cloak>
+    <!--文章-->
+    <div v-if="type == 'slides'" class="container">
+        <h1>${title}</h1>
+        <div class="source">
+            <span>${source}</span> <span>${time}</span>
+        </div>
+        <div v-for="item in slides" class="content">
+            <p >${item.description}</p>
+            <img :src="item.image" alt="" class="content-img">
+        </div>
+    </div>
+    <div v-if="type == 'doc'" class="container">
+        <h1>${title}</h1>
+        <div class="source">
+            <span>${source}</span> <span>${time}</span>
+        </div>
+        <div class="content" v-html="text"></div>
+    </div>
+    <!--视频-->
+    <div v-if="type == 'phvideo'" class="phvideo">
+        <video :src="videoURL" controls="controls" :poster="videoImg"></video>
+        <!--<video id="example_video_1" class="video-js  vjs-big-play-centered " controls preload="none" :poster="videoImg" data-setup="{}" webkit-playsinline>-->
+        <!--<source :src="videoURL" type='video/mp4' />-->
+        <!--</video>-->
+        <h1>${title}</h1>
+        <div class="source">
+            <span>${source}</span> <span>${time}</span>
+        </div>
+    </div>
+    <!--广告-->
+    <div class="advert" v-show="data">
+        <div class="advert-doc">
+            <div class="advert-con">
+                <p>我是广告的标题我是广告的标题我是广告的标题我是广告的标题我是广告的标题我是广告的标题</p>
+                <div>
+                    <span class="advert-source">广告</span>
+                </div>
+            </div>
+            <img src="http://p0.ifengimg.com/29b92e35b2b20708/2017/50/e3e3e3.png" alt="" class="advert-img">
+        </div>
+        <div class="advert-slide">
+            <p style="margin-bottom: 2px;">我是广告的标题</p>
+            <div style="display: flex;">
+                <img src="http://p0.ifengimg.com/29b92e35b2b20708/2017/50/e3e3e3.png" alt="" class="advert-imgs">
+                <img src="http://p0.ifengimg.com/29b92e35b2b20708/2017/50/e3e3e3.png" alt="" class="advert-imgs">
+                <img src="http://p0.ifengimg.com/29b92e35b2b20708/2017/50/e3e3e3.png" alt="" class="advert-imgs">
+            </div>
+            <div class="advert-source">广告</div>
+        </div>
+    </div>
+</div>
+<script>
+    //aid=43536038
+    //aid=cmpp_034470054029484
+    //aid=cmpp_030200052669217
+    //guid=e2741ef3-012b-40c4-b80a-301b68c6a43f
+    var isAid = location.href.match(/aid/);
+    var isGuid = location.href.match(/guid/);
+    var isUrl;
+    if(isAid){
+        var aid = getHashQueryString('aid');
+        isUrl = "https://api.iclient.ifeng.com/ipadtestdoc?aid=" + aid + "&gv=5.5.5&proid=ifengnewsh5&os=ios";
+    }else if(isGuid){
+        var guid = getHashQueryString('guid');
+        isUrl = "https://api.iclient.ifeng.com/api_phoenixtv_details?guid="+guid;
+    }else{
+        window.location.href = 'https://share.iclient.ifeng.com/share_doc404?from=h5meizuh5&freshurl=' + location.href;
+    }
+
+    function getHashQueryString(key) { //获取URL参数
+        var hash = location.search;
+        var reg = new RegExp('[\?\&]' + key + '=([^\&]+)', 'i');
+        var result = hash.match(reg);
+        if (!result || result.length < 1) {
+            return '';
+        }
+        return result[1];
+    }
+    var vm = new Vue({
+        el: '.myDiv',
+        delimiters: ['${', '}'],
+        data: {
+            data: [],
+            title: '',
+            source: '',//信息来源
+            time: '',//发布时间
+            type: '',
+            slides: {},//type为slides时的数据
+            text: '',//type==doc时文章段落
+            videoImg: '',
+            videoURL: ''
+        },
+        mounted:function(){
+            this.getData();
+        },
+        methods: {
+            getData:function () {
+                $.ajax({
+                    dataType: 'jsonp',
+                    url: isUrl,
+                    success:function (res) {
+                        console.log(res);
+                        if(isAid){
+                            if(res.meta.type == 'slides'){
+                                this.data = res;
+                                this.title = res.body.title;
+                                this.source = res.body.source;
+                                this.time = res.body.updateTime;
+                                this.type = res.meta.type;
+                                this.slides = res.body.slides;
+                            }else if(res.meta.type == 'doc'){
+                                this.data = res;
+                                this.type = res.meta.type;
+                                this.title = res.body.title;
+                                this.source = res.body.source;
+                                this.time = res.body.updateTime;
+                                this.text = res.body.text;
+                            }
+                        }else if(isGuid){
+                            if(res.singleVideoInfo[0].type == 'phvideo') {
+                                this.data = res.singleVideoInfo[0];
+                                this.type = res.singleVideoInfo[0].type;
+                                this.title = res.singleVideoInfo[0].title;
+                                this.source = res.singleVideoInfo[0].columnName;
+                                this.time = res.singleVideoInfo[0].videoPublishTime;
+                                this.videoImg = res.singleVideoInfo[0].imgURL;
+                                this.videoURL = res.singleVideoInfo[0].videoURLLow;
+                            }
+                        }
+                    }.bind(this)
+                })
+            }
+        }
+    })
+</script>
+<script type="text/javascript">
+    var gloableSettings = {
+        "domain": "m.ifeng.com",
+        "channelPath": "/",
+        "pt":"",
+    }
+    var globalSettings = gloableSettings;
+</script>
+<!-- 统计探针 -->
+<script src="https://p1.ifengimg.com/a/2016/0809/sta_collection_common_iifeng_v4.js"></script>
+<script src="https://p3.ifengimg.com/a/2017/0329/sta_collection_iifeng_pv_v8.js"></script>         <!-- 统计探针end -->
+</body>
+</html>
+​

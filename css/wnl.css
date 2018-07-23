@@ -1,0 +1,64 @@
+html,
+body,
+div,
+p,
+img,
+span,
+h1,
+video {
+  padding: 0;
+  margin: 0;
+}
+.myDiv {
+  width: 100%;
+}
+.myDiv .container {
+  padding: 0 15px;
+}
+.myDiv .container h1 {
+  margin: 20px 0 5px;
+  font-size: 21px;
+  font-family: PingFangSC-Semibold;
+  color: #333;
+}
+.myDiv .container .source {
+  margin-bottom: 15px;
+  font-size: 13px;
+  font-family: PingFangSC-Regular;
+  color: #999;
+}
+.myDiv .container .content p {
+  font-family: PingFangSC-Regular;
+  font-size: 18px;
+  color: #333333;
+  line-height: 27px;
+  text-align: justify;
+  letter-spacing: 0;
+}
+.myDiv .container .content img {
+  width: 100%;
+  margin: 24px 0;
+}
+.myDiv .container .content-img {
+  width: 100%;
+  margin: 24px 0;
+}
+.myDiv .phvideo video {
+  width: 100%;
+}
+.myDiv .phvideo h1 {
+  margin-top: 15px;
+  padding: 0 15px;
+  font-size: 17px;
+  color: #333;
+  font-family: PingFangSC-Regular;
+}
+.myDiv .phvideo .source {
+  padding: 5px 15px;
+}
+.myDiv .phvideo .source span {
+  font-family: PingFangSC-Regular;
+  font-size: 12px;
+  color: #939393;
+  line-height: 6px;
+}

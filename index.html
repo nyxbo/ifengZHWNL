@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>中华万年历</title>
+    <link rel="stylesheet" href="css/wnl.css">
+    <!--<link rel="stylesheet" href="css/video-js.css">-->
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/vue.min.js"></script>
+    <!--<script src="js/video.min.js"></script>-->
+    <style>
+        /* video.js 修改样式*/
+        /*.myDiv .video-js .vjs-volume-panel.vjs-control.vjs-volume-panel-horizontal{
+            display: none;
+        }
+        .myDiv .video-js .vjs-play-progress{
+            background-color: #E04D31;
+        }
+        .myDiv .video-js .vjs-control-bar{
+            background-color: rgba(255,255,255,0);
+            background-image: linear-gradient(-180deg, rgba(0,0,0,0.00) 4%, rgba(0,0,0,0.76) 100%);
+        }
+        .myDiv .video-js .vjs-slider{
+            background: #484848;
+        }
+        .myDiv .video-js .vjs-load-progress div{
+            background: #484848;
+        }
+        .myDiv .video-js .vjs-progress-holder{
+            height: 2px;
+        }*/
+    </style>
+</head>
+<body>
+    <div class="myDiv" v-cloak>
+        <!--文章-->
+        <div v-if="type == 'slides'" class="container">
+            <h1>${title}</h1>
+            <div class="source">
+                <span>${source}</span>&nbsp;<span>${time}</span>
+            </div>
+            <div v-for="item in slides" class="content">
+                <p>${item.description}</p>
+                <img :src="item.image" alt="" class="content-img">
+            </div>
+        </div>
+        <div v-if="type == 'doc'" class="container">
+            <h1>${title}</h1>
+            <div class="source">
+                <span>${source}</span>&nbsp;<span>${time}</span>
+            </div>
+            <div class="content" v-html="text"></div>
+        </div>
+        <!--视频-->
+        <div v-if="type == 'phvideo'" class="phvideo">
+            <video :src="videoURL" controls="controls" :poster="videoImg"></video>
+            <!--<video id="example_video_1" class="video-js  vjs-big-play-centered " controls preload="none" :poster="videoImg" data-setup="{}" webkit-playsinline>-->
+                <!--<source :src="videoURL" type='video/mp4' />-->
+            <!--</video>-->
+            <h1>${title}</h1>
+            <div class="source">
+                <span>${source}</span>&nbsp;<span>${time}</span>
+            </div>
+        </div>
+    </div>
+    <script>
+        //aid=43536038
+        //aid=cmpp_034470054029484
+        //aid=cmpp_030200052669217
+        //guid=e2741ef3-012b-40c4-b80a-301b68c6a43f
+        //guid=159840c4-a70f-45b4-919a-36b6e154fc40&forward
+        var isAid = location.href.match(/aid/);
+        var isGuid = location.href.match(/guid/);
+        var isUrl;
+        if(isAid){
+            var aid = getHashQueryString('aid');
+            isUrl = "https://api.iclient.ifeng.com/ipadtestdoc?aid=" + aid + "&gv=5.5.5&proid=ifengnewsh5&os=ios";
+        }else if(isGuid){
+            var guid = getHashQueryString('guid');
+            isUrl = "https://api.iclient.ifeng.com/api_phoenixtv_details?guid="+guid;
+        }else{
+            window.location.href = 'https://share.iclient.ifeng.com/share_doc404?from=h5meizuh5&freshurl=' + location.href;
+        }
+
+        function getHashQueryString(key) { //获取URL参数
+            var hash = location.search;
+            var reg = new RegExp('[\?\&]' + key + '=([^\&]+)', 'i');
+            var result = hash.match(reg);
+            if (result == null || result.length < 1) {
+                return '';
+            }
+            return result[1];
+        }
+        var vm = new Vue({
+            el: '.myDiv',
+            delimiters: ['${', '}'],
+            data: {
+                data: [],
+                title: '',
+                source: '',//信息来源
+                time: '',//发布时间
+                type: '',
+                slides: {},//type为slides时的数据
+                text: '',//type==doc时文章段落
+                videoImg: '',
+                videoURL: ''
+            },
+            mounted:function(){
+                this.getData();
+            },
+            methods: {
+                getData:function () {
+                    $.ajax({
+                        dataType: 'jsonp',
+                        url: isUrl,
+                        success:function (res) {
+                            console.log(res);
+                            if(isAid){
+                                if(res.meta.type == 'slides'){
+                                    this.data = res;
+                                    this.title = res.body.title;
+                                    this.source = res.body.source;
+                                    this.time = res.body.updateTime;
+                                    this.type = res.meta.type;
+                                    this.slides = res.body.slides;
+                                }else if(res.meta.type == 'doc'){
+                                    this.data = res;
+                                    this.type = res.meta.type;
+                                    this.title = res.body.title;
+                                    this.source = res.body.source;
+                                    this.time = res.body.updateTime;
+                                    this.text = res.body.text;
+                                }
+                            }else if(isGuid){
+                                if(res.singleVideoInfo[0].type == 'phvideo') {
+                                    this.data = res.singleVideoInfo[0];
+                                    this.type = res.singleVideoInfo[0].type;
+                                    this.title = res.singleVideoInfo[0].title;
+                                    this.source = res.singleVideoInfo[0].columnName;
+                                    this.time = res.singleVideoInfo[0].videoPublishTime;
+                                    this.videoImg = res.singleVideoInfo[0].imgURL;
+                                    this.videoURL = res.singleVideoInfo[0].videoURLLow;
+                                }
+                            }
+                        }.bind(this)
+                    })
+                }
+            }
+        })
+    </script>
+</body>
+</html>
